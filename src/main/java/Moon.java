@@ -1,10 +1,12 @@
 public class Moon {
     public static void main(String[] args) {
-        String banner = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println(banner);
+        String text = "____________________________________________________________\n"
+                        + "Hello! I'm Moon, your personal chatbot.\n"
+                        + "What can I do for you?\n"
+                        + "____________________________________________________________\n"
+                        + "Bye. Hope to see you again soon!\n"
+                        + "____________________________________________________________"
+        ;
+        System.out.println(text);
     }
 }
