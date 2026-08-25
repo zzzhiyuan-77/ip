@@ -91,3 +91,37 @@ ____________________________________________________________
 Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
+
+## Test case: Reject invalid commands without ending the session
+
+**Aim:** Verify that Moon reports missing todo descriptions and unknown commands, then continues to accept valid commands.
+
+### Input
+```text
+todo
+blah
+todo borrow book
+bye
+```
+
+### Expected output
+```text
+____________________________________________________________
+Hello! I'm Moon, your personal chatbot.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Oof! your todo needs a description.
+____________________________________________________________
+____________________________________________________________
+ Oof! I don't recognise that command. Try todo, deadline, event, list, mark, unmark, or bye.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] borrow book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
