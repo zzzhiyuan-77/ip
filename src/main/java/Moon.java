@@ -1,12 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Runs Moon, a chatbot that manages a list of tasks.
  */
 public class Moon {
-    /** The maximum number of tasks Moon stores while it is running. */
-    private static final int MAX_TASKS = 100;
-
     /** The line used to separate Moon's messages. */
     private static final String DIVIDER = "____________________________________________________________";
 
@@ -17,8 +16,7 @@ public class Moon {
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        List<Task> tasks = new ArrayList<>();
 
         System.out.println(DIVIDER);
         System.out.println("Hello! I'm Moon, your personal chatbot.");
@@ -35,7 +33,7 @@ public class Moon {
                     System.out.println(DIVIDER);
                     return;
                 }
-                taskCount = processCommand(command, tasks, taskCount);
+                processCommand(command, tasks);
             } catch (MoonException exception) {
                 System.out.println(" Oof! " + exception.getMessage());
             }
@@ -45,47 +43,55 @@ public class Moon {
     }
 
     /**
-     * Processes one command and returns the resulting number of stored tasks.
+     * Processes one command.
      *
      * @param command the command entered by the user
-     * @param tasks the array that stores tasks
-     * @param taskCount the number of tasks currently stored
-     * @return the number of tasks after processing the command
+     * @param tasks the list that stores tasks
      * @throws MoonException if the command is invalid
      */
-    private static int processCommand(String command, Task[] tasks, int taskCount) throws MoonException {
+    private static void processCommand(String command, List<Task> tasks) throws MoonException {
         if (command.equals("list")) {
-            printTaskList(tasks, taskCount);
-            return taskCount;
+            printTaskList(tasks);
+            return;
         }
         if (command.equals("todo") || command.startsWith("todo ")) {
             String description = command.substring(4).trim();
             if (description.isEmpty()) {
                 throw new MoonException("your todo needs a description.");
             }
-            return addTask(tasks, taskCount, new ToDo(description));
+            addTask(tasks, new ToDo(description));
+            return;
         }
         if (command.equals("deadline") || command.startsWith("deadline ")) {
-            return addTask(tasks, taskCount, parseDeadline(command));
+            addTask(tasks, parseDeadline(command));
+            return;
         }
         if (command.equals("event") || command.startsWith("event ")) {
-            return addTask(tasks, taskCount, parseEvent(command));
+            addTask(tasks, parseEvent(command));
+            return;
         }
         if (command.equals("mark") || command.startsWith("mark ")) {
-            Task task = findTask(command, "mark", tasks, taskCount);
+            Task task = tasks.get(findTaskIndex(command, "mark", tasks));
             task.markAsDone();
             System.out.println(" Nice! I've marked this task as done:");
             System.out.println("   " + task);
-            return taskCount;
+            return;
         }
         if (command.equals("unmark") || command.startsWith("unmark ")) {
-            Task task = findTask(command, "unmark", tasks, taskCount);
+            Task task = tasks.get(findTaskIndex(command, "unmark", tasks));
             task.unmarkAsDone();
             System.out.println(" OK, I've marked this task as not done yet:");
             System.out.println("   " + task);
-            return taskCount;
+            return;
         }
-        throw new MoonException("I don't recognise that command. Try todo, deadline, event, list, mark, unmark, or bye.");
+        if (command.equals("delete") || command.startsWith("delete ")) {
+            Task removedTask = tasks.remove(findTaskIndex(command, "delete", tasks));
+            System.out.println(" Noted. I've removed this task:");
+            System.out.println("   " + removedTask);
+            System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+            return;
+        }
+        throw new MoonException("I don't recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
     }
 
     /**
@@ -139,16 +145,15 @@ public class Moon {
     }
 
     /**
-     * Finds the task identified by a mark or unmark command.
+     * Finds the index of a task identified by a numbered command.
      *
      * @param command the command entered by the user
-     * @param action the command word, either {@code mark} or {@code unmark}
-     * @param tasks the array that stores tasks
-     * @param taskCount the number of tasks currently stored
-     * @return the requested task
+     * @param action the command word, such as {@code mark} or {@code delete}
+     * @param tasks the list that stores tasks
+     * @return the requested task's zero-based index
      * @throws MoonException if no valid task number was provided
      */
-    private static Task findTask(String command, String action, Task[] tasks, int taskCount)
+    private static int findTaskIndex(String command, String action, List<Task> tasks)
             throws MoonException {
         String numberText = command.substring(action.length()).trim();
         if (numberText.isEmpty()) {
@@ -156,10 +161,10 @@ public class Moon {
         }
         try {
             int taskNumber = Integer.parseInt(numberText);
-            if (taskNumber < 1 || taskNumber > taskCount) {
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
                 throw new MoonException("task " + taskNumber + " is not in your list yet.");
             }
-            return tasks[taskNumber - 1];
+            return taskNumber - 1;
         } catch (NumberFormatException exception) {
             throw new MoonException("use a task number after " + action + ", for example: " + action + " 1.");
         }
@@ -168,34 +173,25 @@ public class Moon {
     /**
      * Prints every task currently stored by Moon.
      *
-     * @param tasks the array that stores tasks
-     * @param taskCount the number of tasks currently stored
+     * @param tasks the list that stores tasks
      */
-    private static void printTaskList(Task[] tasks, int taskCount) {
+    private static void printTaskList(List<Task> tasks) {
         System.out.println(" Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println(" " + (i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
     }
 
     /**
      * Adds a task to the list and displays Moon's confirmation message.
      *
-     * @param tasks the array that stores tasks
-     * @param taskCount the number of tasks currently stored
+     * @param tasks the list that stores tasks
      * @param task the task to add
-     * @return the number of tasks after adding the task
-     * @throws MoonException if the task list has reached its maximum capacity
      */
-    private static int addTask(Task[] tasks, int taskCount, Task task) throws MoonException {
-        if (taskCount == MAX_TASKS) {
-            throw new MoonException("your task list is full — 100 tasks is the max.");
-        }
-        tasks[taskCount] = task;
+    private static void addTask(List<Task> tasks, Task task) {
+        tasks.add(task);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
-        taskCount++;
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
-        return taskCount;
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 }
