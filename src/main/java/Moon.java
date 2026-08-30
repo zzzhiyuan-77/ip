@@ -15,10 +15,10 @@ public class Moon {
      *
      * @param args command-line arguments, which are not used by this program
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        List<Task> tasks = new ArrayList<>();
         Storage storage = new Storage();
+        List<Task> tasks = storage.load();
 
         System.out.println(DIVIDER);
         System.out.println("Hello! I'm Moon, your personal chatbot.");
