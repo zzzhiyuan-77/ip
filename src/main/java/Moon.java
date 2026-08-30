@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -140,7 +142,7 @@ public class Moon {
         if (by.isEmpty()) {
             throw new MoonException("your deadline needs a date or time after /by.");
         }
-        return new Deadline(description, by);
+        return new Deadline(description, parseDate(by));
     }
 
     /**
@@ -166,7 +168,22 @@ public class Moon {
         if (from.isEmpty() || to.isEmpty()) {
             throw new MoonException("your event needs both a start time and an end time.");
         }
-        return new Event(description, from, to);
+        return new Event(description, parseDate(from), parseDate(to));
+    }
+
+    /**
+     * Converts an ISO-8601 date entered by the user into a date object.
+     *
+     * @param dateText the date text in {@code yyyy-MM-dd} format
+     * @return the parsed date
+     * @throws MoonException if the date is not valid or is not in the required format
+     */
+    private static LocalDate parseDate(String dateText) throws MoonException {
+        try {
+            return LocalDate.parse(dateText);
+        } catch (DateTimeParseException exception) {
+            throw new MoonException("use a date in yyyy-MM-dd format, for example: 2019-12-02.");
+        }
     }
 
     /**

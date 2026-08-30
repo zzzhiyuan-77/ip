@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -104,7 +106,7 @@ public class Storage {
         if (parts.length != 4 || parts[2].isBlank() || parts[3].isBlank()) {
             throw new IOException("The data file has an invalid deadline format.");
         }
-        return new Deadline(parts[2], parts[3]);
+        return new Deadline(parts[2], parseSavedDate(parts[3]));
     }
 
     /**
@@ -118,6 +120,21 @@ public class Storage {
         if (parts.length != 5 || parts[2].isBlank() || parts[3].isBlank() || parts[4].isBlank()) {
             throw new IOException("The data file has an invalid event format.");
         }
-        return new Event(parts[2], parts[3], parts[4]);
+        return new Event(parts[2], parseSavedDate(parts[3]), parseSavedDate(parts[4]));
+    }
+
+    /**
+     * Parses one ISO-8601 date stored in Moon's data file.
+     *
+     * @param dateText the saved date
+     * @return the parsed date
+     * @throws IOException if the saved date is invalid
+     */
+    private LocalDate parseSavedDate(String dateText) throws IOException {
+        try {
+            return LocalDate.parse(dateText);
+        } catch (DateTimeParseException exception) {
+            throw new IOException("The data file has an invalid date.", exception);
+        }
     }
 }

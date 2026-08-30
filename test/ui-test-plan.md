@@ -13,8 +13,8 @@
 ### Input
 ```text
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-12-02
+event project meeting /from 2019-12-03 /to 2019-12-04
 list
 bye
 ```
@@ -32,19 +32,19 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Dec 03 2019 to: Dec 04 2019)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][ ] return book (by: Sunday)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 2.[D][ ] return book (by: Dec 02 2019)
+ 3.[E][ ] project meeting (from: Dec 03 2019 to: Dec 04 2019)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -180,8 +180,8 @@ ____________________________________________________________
 ### Input
 ```text
 todo read book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-12-02
+event project meeting /from 2019-12-03 /to 2019-12-04
 delete 2
 list
 bye
@@ -200,23 +200,23 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Dec 03 2019 to: Dec 04 2019)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Noted. I've removed this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Dec 02 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] read book
- 2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 2.[E][ ] project meeting (from: Dec 03 2019 to: Dec 04 2019)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -232,7 +232,7 @@ ____________________________________________________________
 todo read book
 deadline submit report
 event team meeting /from Mon 2pm
-deadline submit report /by Friday
+deadline submit report /by 2019-12-06
 list
 bye
 ```
@@ -256,13 +256,13 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] submit report (by: Friday)
+   [D][ ] submit report (by: Dec 06 2019)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
  1.[T][ ] read book
- 2.[D][ ] submit report (by: Friday)
+ 2.[D][ ] submit report (by: Dec 06 2019)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
