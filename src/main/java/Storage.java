@@ -32,7 +32,7 @@ public class Storage {
      * Loads the tasks saved by Moon, or returns an empty list on Moon's first run.
      *
      * @return the tasks stored in Moon's data file
-     * @throws IOException if the data file cannot be read
+     * @throws IOException if the data file cannot be read or has an invalid format
      */
     public List<Task> load() throws IOException {
         List<Task> tasks = new ArrayList<>();
@@ -52,17 +52,72 @@ public class Storage {
      * @param savedTask one saved task line
      * @return the recreated task
      */
-    private Task createTask(String savedTask) {
-        String[] parts = savedTask.split(" \\| ");
+    private Task createTask(String savedTask) throws IOException {
+        String[] parts = savedTask.split(" \\| ", -1);
+        if (parts.length < 3 || !isValidStatus(parts[1])) {
+            throw new IOException("The data file has an invalid task format.");
+        }
         Task task = switch (parts[0]) {
-        case "T" -> new ToDo(parts[2]);
-        case "D" -> new Deadline(parts[2], parts[3]);
-        case "E" -> new Event(parts[2], parts[3], parts[4]);
-        default -> throw new IllegalArgumentException("Unknown task type: " + parts[0]);
+        case "T" -> createToDo(parts);
+        case "D" -> createDeadline(parts);
+        case "E" -> createEvent(parts);
+        default -> throw new IOException("The data file has an unknown task type.");
         };
         if (parts[1].equals("1")) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Checks whether a saved completion status is valid.
+     *
+     * @param status the saved completion status
+     * @return whether the status is {@code 0} or {@code 1}
+     */
+    private boolean isValidStatus(String status) {
+        return status.equals("0") || status.equals("1");
+    }
+
+    /**
+     * Recreates a to-do from its saved fields.
+     *
+     * @param parts the fields in the saved task line
+     * @return the recreated to-do
+     * @throws IOException if the saved fields are invalid
+     */
+    private ToDo createToDo(String[] parts) throws IOException {
+        if (parts.length != 3 || parts[2].isBlank()) {
+            throw new IOException("The data file has an invalid to-do format.");
+        }
+        return new ToDo(parts[2]);
+    }
+
+    /**
+     * Recreates a deadline from its saved fields.
+     *
+     * @param parts the fields in the saved task line
+     * @return the recreated deadline
+     * @throws IOException if the saved fields are invalid
+     */
+    private Deadline createDeadline(String[] parts) throws IOException {
+        if (parts.length != 4 || parts[2].isBlank() || parts[3].isBlank()) {
+            throw new IOException("The data file has an invalid deadline format.");
+        }
+        return new Deadline(parts[2], parts[3]);
+    }
+
+    /**
+     * Recreates an event from its saved fields.
+     *
+     * @param parts the fields in the saved task line
+     * @return the recreated event
+     * @throws IOException if the saved fields are invalid
+     */
+    private Event createEvent(String[] parts) throws IOException {
+        if (parts.length != 5 || parts[2].isBlank() || parts[3].isBlank() || parts[4].isBlank()) {
+            throw new IOException("The data file has an invalid event format.");
+        }
+        return new Event(parts[2], parts[3], parts[4]);
     }
 }

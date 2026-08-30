@@ -15,15 +15,16 @@ public class Moon {
      *
      * @param args command-line arguments, which are not used by this program
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Storage storage = new Storage();
-        List<Task> tasks = storage.load();
 
         System.out.println(DIVIDER);
         System.out.println("Hello! I'm Moon, your personal chatbot.");
         System.out.println("What can I do for you?");
         System.out.println(DIVIDER);
+
+        List<Task> tasks = loadTasks(storage);
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine().trim();
@@ -43,6 +44,21 @@ public class Moon {
             }
 
             System.out.println(DIVIDER);
+        }
+    }
+
+    /**
+     * Loads saved tasks without preventing Moon from starting when the data cannot be read.
+     *
+     * @param storage the component that reads Moon's data file
+     * @return the saved tasks, or an empty list when loading fails
+     */
+    private static List<Task> loadTasks(Storage storage) {
+        try {
+            return storage.load();
+        } catch (IOException exception) {
+            System.out.println(" Oof! I couldn't load your task list. Starting with an empty list.");
+            return new ArrayList<>();
         }
     }
 
