@@ -25,4 +25,14 @@ public class Deadline extends Task {
     public String toString() {
         return "[D][" + getStatusIcon() + "] " + description + " (by: " + by + ")";
     }
+
+    /**
+     * Returns this deadline in the format used by the data file.
+     *
+     * @return a line that can be saved to Moon's data file
+     */
+    @Override
+    public String toSaveFormat() {
+        return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + by;
+    }
 }

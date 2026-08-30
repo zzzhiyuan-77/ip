@@ -31,4 +31,15 @@ public class Event extends Task {
         return "[E][" + getStatusIcon() + "] " + description
                 + " (from: " + from + " to: " + to + ")";
     }
+
+    /**
+     * Returns this event in the format used by the data file.
+     *
+     * @return a line that can be saved to Moon's data file
+     */
+    @Override
+    public String toSaveFormat() {
+        return "E | " + (isDone ? "1" : "0") + " | " + description
+                + " | " + from + " | " + to;
+    }
 }

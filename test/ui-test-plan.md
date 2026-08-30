@@ -92,6 +92,48 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test case: Save after every task-list change
+
+**Aim:** Verify that successful add, mark, unmark, and delete commands complete normally; each command triggers saving of the changed list.
+
+### Input
+```text
+todo read book
+mark 1
+unmark 1
+delete 1
+bye
+```
+
+### Expected output
+```text
+____________________________________________________________
+Hello! I'm Moon, your personal chatbot.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Nice! I've marked this task as done:
+   [T][X] read book
+____________________________________________________________
+____________________________________________________________
+ OK, I've marked this task as not done yet:
+   [T][ ] read book
+____________________________________________________________
+____________________________________________________________
+ Noted. I've removed this task:
+   [T][ ] read book
+ Now you have 0 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test case: Reject invalid commands without ending the session
 
 **Aim:** Verify that Moon reports missing todo descriptions and unknown commands, then continues to accept valid commands.

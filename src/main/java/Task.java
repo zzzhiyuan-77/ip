@@ -36,6 +36,15 @@ public class Task {
         return description;
     }
 
+    /**
+     * Returns this task in the format used by the data file.
+     *
+     * @return a line that can be saved to Moon's data file
+     */
+    public String toSaveFormat() {
+        return "T | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
     /** Marks this task as done. */
     public void markAsDone() {
         isDone = true;

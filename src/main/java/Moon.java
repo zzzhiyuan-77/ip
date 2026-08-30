@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,6 +18,7 @@ public class Moon {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         List<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage();
 
         System.out.println(DIVIDER);
         System.out.println("Hello! I'm Moon, your personal chatbot.");
@@ -33,9 +35,11 @@ public class Moon {
                     System.out.println(DIVIDER);
                     return;
                 }
-                processCommand(command, tasks);
+                processCommand(command, tasks, storage);
             } catch (MoonException exception) {
                 System.out.println(" Oof! " + exception.getMessage());
+            } catch (IOException exception) {
+                System.out.println(" Oof! I couldn't save your task list.");
             }
 
             System.out.println(DIVIDER);
@@ -49,7 +53,8 @@ public class Moon {
      * @param tasks the list that stores tasks
      * @throws MoonException if the command is invalid
      */
-    private static void processCommand(String command, List<Task> tasks) throws MoonException {
+    private static void processCommand(String command, List<Task> tasks, Storage storage)
+            throws MoonException, IOException {
         if (command.equals("list")) {
             printTaskList(tasks);
             return;
@@ -59,20 +64,21 @@ public class Moon {
             if (description.isEmpty()) {
                 throw new MoonException("your todo needs a description.");
             }
-            addTask(tasks, new ToDo(description));
+            addTask(tasks, new ToDo(description), storage);
             return;
         }
         if (command.equals("deadline") || command.startsWith("deadline ")) {
-            addTask(tasks, parseDeadline(command));
+            addTask(tasks, parseDeadline(command), storage);
             return;
         }
         if (command.equals("event") || command.startsWith("event ")) {
-            addTask(tasks, parseEvent(command));
+            addTask(tasks, parseEvent(command), storage);
             return;
         }
         if (command.equals("mark") || command.startsWith("mark ")) {
             Task task = tasks.get(findTaskIndex(command, "mark", tasks));
             task.markAsDone();
+            storage.save(tasks);
             System.out.println(" Nice! I've marked this task as done:");
             System.out.println("   " + task);
             return;
@@ -80,12 +86,14 @@ public class Moon {
         if (command.equals("unmark") || command.startsWith("unmark ")) {
             Task task = tasks.get(findTaskIndex(command, "unmark", tasks));
             task.unmarkAsDone();
+            storage.save(tasks);
             System.out.println(" OK, I've marked this task as not done yet:");
             System.out.println("   " + task);
             return;
         }
         if (command.equals("delete") || command.startsWith("delete ")) {
             Task removedTask = tasks.remove(findTaskIndex(command, "delete", tasks));
+            storage.save(tasks);
             System.out.println(" Noted. I've removed this task:");
             System.out.println("   " + removedTask);
             System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
@@ -188,8 +196,9 @@ public class Moon {
      * @param tasks the list that stores tasks
      * @param task the task to add
      */
-    private static void addTask(List<Task> tasks, Task task) {
+    private static void addTask(List<Task> tasks, Task task, Storage storage) throws IOException {
         tasks.add(task);
+        storage.save(tasks);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
