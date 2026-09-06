@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Storage {
     /** The relative, operating-system-independent location of Moon's data file. */
-    private static final Path FILE_PATH = Path.of("data", "duke.txt");
+    private static final Path FILE_PATH = Path.of("data", "moon.txt");
 
     /**
      * Saves every task, replacing the previous saved task list.
