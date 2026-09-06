@@ -3,50 +3,43 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Runs Moon, a chatbot that manages a list of tasks.
  */
 
 public class Moon {
-    /** The line used to separate Moon's messages. */
-    private static final String DIVIDER = "____________________________________________________________";
-
     /**
      * Starts the chatbot and reads commands from the user.
      *
      * @param args command-line arguments, which are not used by this program
      */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Ui ui = new Ui();
         Storage storage = new Storage();
 
-        System.out.println(DIVIDER);
-        System.out.println("Hello! I'm Moon, your personal chatbot.");
-        System.out.println("What can I do for you?");
-        System.out.println(DIVIDER);
+        ui.showWelcome();
 
-        List<Task> tasks = loadTasks(storage);
+        List<Task> tasks = loadTasks(storage, ui);
 
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine().trim();
-            System.out.println(DIVIDER);
+        String command;
+        while ((command = ui.readCommand()) != null) {
+            ui.showLine();
 
             try {
                 if (command.equals("bye")) {
-                    System.out.println("Bye. Hope to see you again soon!");
-                    System.out.println(DIVIDER);
+                    ui.showGoodbye();
+                    ui.showLine();
                     return;
                 }
                 processCommand(command, tasks, storage);
             } catch (MoonException exception) {
-                System.out.println(" Oof! " + exception.getMessage());
+                ui.showError(exception.getMessage());
             } catch (IOException exception) {
-                System.out.println(" Oof! I couldn't save your task list.");
+                ui.showSavingError();
             }
 
-            System.out.println(DIVIDER);
+            ui.showLine();
         }
     }
 
@@ -56,11 +49,11 @@ public class Moon {
      * @param storage the component that reads Moon's data file
      * @return the saved tasks, or an empty list when loading fails
      */
-    private static List<Task> loadTasks(Storage storage) {
+    private static List<Task> loadTasks(Storage storage, Ui ui) {
         try {
             return storage.load();
         } catch (IOException exception) {
-            System.out.println(" Oof! I couldn't load your task list. Starting with an empty list.");
+            ui.showLoadingError();
             return new ArrayList<>();
         }
     }
