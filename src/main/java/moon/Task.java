@@ -1,3 +1,5 @@
+package moon;
+
 /**
  * Represents one task in Moon's task list.
  */

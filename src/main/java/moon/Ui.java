@@ -1,3 +1,5 @@
+package moon;
+
 import java.util.Scanner;
 
 /**
