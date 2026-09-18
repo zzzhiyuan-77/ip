@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -60,12 +61,17 @@ public class MainWindow {
             scrollPane.setVvalue(1.0);
             dialogBox.setAlignment(isUserMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
         } catch (IOException exception) {
-            addFallbackDialog(message);
+            addFallbackDialog(message, isUserMessage);
         }
     }
 
-    private void addFallbackDialog(String message) {
-        DialogBox dialogBox = new DialogBox(message, false);
-        dialogContainer.getChildren().add(dialogBox);
+    private void addFallbackDialog(String message, boolean isUserMessage) {
+        Label fallback = new Label(message);
+        fallback.setWrapText(true);
+        fallback.getStyleClass().addAll("message-bubble", isUserMessage ? "user-message" : "moon-message");
+        if (message.startsWith("Oof!")) {
+            fallback.getStyleClass().add("error-message");
+        }
+        dialogContainer.getChildren().add(fallback);
     }
 }
