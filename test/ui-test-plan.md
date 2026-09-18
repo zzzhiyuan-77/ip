@@ -51,6 +51,50 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test case: Find tasks by keyword
+
+**Aim:** Verify that find displays only tasks whose descriptions contain the keyword, ignoring letter case.
+
+### Input
+```text
+todo read book
+deadline return book /by 2019-12-02
+todo wash dishes
+find BOOK
+bye
+```
+
+### Expected output
+```text
+____________________________________________________________
+Hello! I'm Moon, your personal chatbot.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: Dec 02 2019)
+ Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Got it. I've added this task:
+   [T][ ] wash dishes
+ Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+ Here are the matching tasks in your list:
+ 1.[T][ ] read book
+ 2.[D][ ] return book (by: Dec 02 2019)
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test case: Mark and unmark a task
 
 **Aim:** Verify that marking a task done and then unmarking it changes the displayed status correctly.

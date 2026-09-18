@@ -1,6 +1,8 @@
 package moon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -23,5 +25,14 @@ public class TaskTest {
         task.unmarkAsDone();
         assertEquals(" ", task.getStatusIcon());
         assertEquals("T | 0 | read book", task.toSaveFormat());
+    }
+
+    /** Verifies that keyword matching ignores letter case. */
+    @Test
+    void taskDescription_matchesKeyword_ignoresCase() {
+        Task task = new Task("read book");
+
+        assertTrue(task.matchesKeyword("BOOK"));
+        assertFalse(task.matchesKeyword("assignment"));
     }
 }

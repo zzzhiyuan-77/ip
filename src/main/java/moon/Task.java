@@ -1,5 +1,7 @@
 package moon;
 
+import java.util.Locale;
+
 /**
  * Represents one task in Moon's task list.
  */
@@ -36,6 +38,17 @@ public class Task {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Returns whether this task description contains the specified keyword,
+     * ignoring letter case.
+     *
+     * @param keyword the keyword to search for
+     * @return whether the description contains the keyword
+     */
+    public boolean matchesKeyword(String keyword) {
+        return description.toLowerCase(Locale.ROOT).contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     /**

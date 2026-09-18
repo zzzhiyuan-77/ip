@@ -73,6 +73,10 @@ public class Moon {
             printTaskList(tasks);
             return;
         }
+        if (command.equals("find") || command.startsWith("find ")) {
+            printMatchingTasks(command, tasks);
+            return;
+        }
         if (command.equals("todo") || command.startsWith("todo ")) {
             String description = command.substring(4).trim();
             if (description.isEmpty()) {
@@ -217,6 +221,30 @@ public class Moon {
         System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + "." + tasks.get(i));
+        }
+    }
+
+    /**
+     * Prints tasks whose descriptions contain the requested keyword.
+     *
+     * @param command the find command entered by the user
+     * @param tasks the list that stores tasks
+     * @throws MoonException if no keyword was provided
+     */
+    private static void printMatchingTasks(String command, List<Task> tasks)
+            throws MoonException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new MoonException("your find needs a keyword.");
+        }
+
+        System.out.println(" Here are the matching tasks in your list:");
+        int matchingTaskNumber = 1;
+        for (Task task : tasks) {
+            if (task.matchesKeyword(keyword)) {
+                System.out.println(" " + matchingTaskNumber + "." + task);
+                matchingTaskNumber++;
+            }
         }
     }
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -50,7 +51,7 @@ def read_test_cases(plan_path: Path) -> list[TestCase]:
 
 def compile_program(repo: Path, output_dir: Path) -> None:
     """Compile all Java source files with Java 25 before testing the UI."""
-    sources = sorted((repo / "src" / "main" / "java").glob("*.java"))
+    sources = sorted((repo / "src" / "main" / "java").rglob("*.java"))
     result = subprocess.run(
         ["javac", "--release", "25", "-d", str(output_dir), *(str(source) for source in sources)],
         cwd=repo,
@@ -83,13 +84,14 @@ def main() -> None:
     compile_program(repo, output_dir)
 
     for case in cases:
-        result = subprocess.run(
-            ["java", "-cp", str(output_dir), "Moon"],
-            cwd=repo,
-            input=f"{case.input_text}\n",
-            text=True,
-            capture_output=True,
-        )
+        with tempfile.TemporaryDirectory() as session_dir:
+            result = subprocess.run(
+                ["java", "-cp", str(output_dir), "moon.Moon"],
+                cwd=session_dir,
+                input=f"{case.input_text}\n",
+                text=True,
+                capture_output=True,
+            )
         actual_output = normalise(result.stdout)
         print_session(case, actual_output)
 
