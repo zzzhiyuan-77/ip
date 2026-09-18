@@ -21,6 +21,12 @@ checkstyle {
 
 dependencies {
     String jUnitVersion = '5.14.4'
+    String javafxVersion = '17.0.7'
+    ['base', 'controls', 'fxml', 'graphics'].each { module ->
+        implementation "org.openjfx:javafx-${module}:${javafxVersion}:win"
+        implementation "org.openjfx:javafx-${module}:${javafxVersion}:mac"
+        implementation "org.openjfx:javafx-${module}:${javafxVersion}:linux"
+    }
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
 
@@ -43,7 +49,7 @@ test {
 }
 
 application {
-    mainClass = 'moon.Moon'
+    mainClass = 'moon.Launcher'
 }
 
 jar {
