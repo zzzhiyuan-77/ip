@@ -227,18 +227,17 @@ public class MoonEngine {
     }
 
     private void printMatchingTasks(String command, StringBuilder response) throws MoonException {
-        String keyword = command.substring("find".length()).trim();
+        String keyword = command.substring(FIND_COMMAND.length()).trim();
         if (keyword.isEmpty()) {
             throw new MoonException("your find needs a keyword.");
         }
 
         appendLine(response, " Here are the matching tasks in your list:");
-        int matchingTaskNumber = 1;
-        for (Task task : tasks) {
-            if (task.matchesKeyword(keyword)) {
-                appendLine(response, " " + matchingTaskNumber + "." + task);
-                matchingTaskNumber++;
-            }
+        List<Task> matchingTasks = tasks.stream()
+                .filter(task -> task.matchesKeyword(keyword))
+                .toList();
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            appendLine(response, " " + (i + 1) + "." + matchingTasks.get(i));
         }
     }
 

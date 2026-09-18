@@ -31,10 +31,9 @@ public class Storage {
     public void save(List<Task> tasks) throws IOException {
         Files.createDirectories(FILE_PATH.getParent());
 
-        List<String> savedTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            savedTasks.add(task.toSaveFormat());
-        }
+        List<String> savedTasks = tasks.stream()
+                .map(Task::toSaveFormat)
+                .toList();
         Files.write(FILE_PATH, savedTasks, StandardCharsets.UTF_8);
     }
 
