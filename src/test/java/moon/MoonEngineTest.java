@@ -31,7 +31,7 @@ public class MoonEngineTest {
     public void getResponse_bye_returnsFarewell() {
         MoonEngine engine = new MoonEngine();
 
-        assertEquals("Bye. Hope to see you again soon!", engine.getResponse("bye"));
+        assertEquals("Aight, catch you later ✌️", engine.getResponse("bye"));
     }
 
     /** Verifies that undo reports clearly when no previous mutation exists. */
@@ -39,6 +39,6 @@ public class MoonEngineTest {
     public void getResponse_undoWithoutPreviousCommand_reportsNoAction() {
         MoonEngine engine = new MoonEngine();
 
-        assertTrue(engine.getResponse("undo").contains("Nothing to undo."));
+        assertTrue(engine.getResponse("undo").contains("No previous move to undo"));
     }
 }

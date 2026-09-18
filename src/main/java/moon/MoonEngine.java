@@ -21,7 +21,7 @@ public class MoonEngine {
     private static final String BY_SEPARATOR = " /by ";
     private static final String FROM_SEPARATOR = " /from ";
     private static final String TO_SEPARATOR = " /to ";
-    private static final String UNKNOWN_COMMAND_MESSAGE = "I don't recognise that command."
+    private static final String UNKNOWN_COMMAND_MESSAGE = "Hmm, I don't know that command yet, bestie."
             + " Try todo, deadline, event, find, list, mark, unmark, delete, undo, or bye.";
 
     private final Storage storage;
@@ -63,14 +63,14 @@ public class MoonEngine {
      */
     public String getResponse(String command) {
         if (command.equals(BYE_COMMAND)) {
-            return "Bye. Hope to see you again soon!";
+            return "Aight, catch you later ✌️";
         }
         try {
             return processCommand(command);
         } catch (MoonException exception) {
-            return " Oof! " + exception.getMessage() + System.lineSeparator();
+            return "Oof! " + exception.getMessage() + System.lineSeparator();
         } catch (IOException exception) {
-            return " Oof! I couldn't save your task list." + System.lineSeparator();
+            return "Oof! I couldn't save your task list — the save got a little scuffed." + System.lineSeparator();
         }
     }
 
@@ -109,12 +109,12 @@ public class MoonEngine {
         String details = command.substring(DEADLINE_COMMAND.length()).trim();
         int byIndex = details.indexOf(BY_SEPARATOR);
         if (byIndex < 0) {
-            throw new MoonException("a deadline needs /by followed by its due date or time.");
+            throw new MoonException("a deadline needs /by followed by its due date or time, fr.");
         }
         String description = details.substring(0, byIndex).trim();
         String by = details.substring(byIndex + BY_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
-            throw new MoonException("your deadline needs a description before /by.");
+            throw new MoonException("your deadline needs a description before /by — give me something to work with.");
         }
         if (by.isEmpty()) {
             throw new MoonException("your deadline needs a date or time after /by.");
@@ -127,7 +127,7 @@ public class MoonEngine {
         int fromIndex = details.indexOf(FROM_SEPARATOR);
         int toIndex = details.indexOf(TO_SEPARATOR);
         if (fromIndex < 0 || toIndex < 0 || toIndex < fromIndex) {
-            throw new MoonException("an event needs /from and /to times.");
+            throw new MoonException("an event needs both /from and /to times, no cap.");
         }
         String description = details.substring(0, fromIndex).trim();
         String from = details.substring(fromIndex + FROM_SEPARATOR.length(), toIndex).trim();
@@ -145,19 +145,19 @@ public class MoonEngine {
         try {
             return LocalDate.parse(dateText);
         } catch (DateTimeParseException exception) {
-            throw new MoonException("use a date in yyyy-MM-dd format, for example: 2019-12-02.");
+            throw new MoonException("use a date in yyyy-MM-dd format, for example: 2019-12-02 — easy peasy.");
         }
     }
 
     private int findTaskIndex(String command, String action) throws MoonException {
         String numberText = command.substring(action.length()).trim();
         if (numberText.isEmpty()) {
-            throw new MoonException("tell me which task number to " + action + ".");
+            throw new MoonException("tell me which task number to " + action + ", bestie.");
         }
         try {
             int taskNumber = Integer.parseInt(numberText);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new MoonException("task " + taskNumber + " is not in your list yet.");
+                throw new MoonException("task " + taskNumber + " isn't in your list yet.");
             }
             assert taskNumber - 1 >= 0 && taskNumber - 1 < tasks.size()
                     : "A validated task number must produce a valid list index.";
@@ -187,7 +187,7 @@ public class MoonEngine {
     private String addTodo(String command) throws MoonException, IOException {
         String description = command.substring(TODO_COMMAND.length()).trim();
         if (description.isEmpty()) {
-            throw new MoonException("your todo needs a description.");
+            throw new MoonException("your todo needs a description — drop the details here.");
         }
         return addTask(new ToDo(description));
     }
@@ -200,7 +200,7 @@ public class MoonEngine {
         storage.save(tasks);
 
         StringBuilder response = new StringBuilder();
-        appendLine(response, " Nice! I've marked this task as done:");
+        appendLine(response, " Bet. Marked this task as done:");
         appendLine(response, "   " + task);
         return response.toString();
     }
@@ -213,7 +213,7 @@ public class MoonEngine {
         storage.save(tasks);
 
         StringBuilder response = new StringBuilder();
-        appendLine(response, " OK, I've marked this task as not done yet:");
+        appendLine(response, "Got you. This task is back to not done:");
         appendLine(response, "   " + task);
         return response.toString();
     }
@@ -225,14 +225,14 @@ public class MoonEngine {
         storage.save(tasks);
 
         StringBuilder response = new StringBuilder();
-        appendLine(response, " Noted. I've removed this task:");
+        appendLine(response, " Say less. Deleted this task:");
         appendLine(response, "   " + removedTask);
-        appendLine(response, " Now you have " + tasks.size() + " tasks in the list.");
+        appendLine(response, " You have " + tasks.size() + " tasks left in the list.");
         return response.toString();
     }
 
     private void printTaskList(StringBuilder response) {
-        appendLine(response, " Here are the tasks in your list:");
+        appendLine(response, " Here's the current task vibe:");
         for (int i = 0; i < tasks.size(); i++) {
             appendLine(response, " " + (i + 1) + "." + tasks.get(i));
         }
@@ -244,7 +244,7 @@ public class MoonEngine {
             throw new MoonException("your find needs a keyword.");
         }
 
-        appendLine(response, " Here are the matching tasks in your list:");
+        appendLine(response, " Found these matching tasks:");
         List<Task> matchingTasks = tasks.stream()
                 .filter(task -> task.matchesKeyword(keyword))
                 .toList();
@@ -259,15 +259,15 @@ public class MoonEngine {
         storage.save(tasks);
 
         StringBuilder response = new StringBuilder();
-        appendLine(response, " Got it. I've added this task:");
+        appendLine(response, " Bet. Added this task:");
         appendLine(response, "   " + task);
-        appendLine(response, " Now you have " + tasks.size() + " tasks in the list.");
+        appendLine(response, " You have " + tasks.size() + " tasks in the list now.");
         return response.toString();
     }
 
     private String undoLastCommand() throws IOException {
         if (previousTaskState == null) {
-            return " Nothing to undo." + System.lineSeparator();
+            return " No previous move to undo, bestie." + System.lineSeparator();
         }
 
         List<Task> restoredTasks = storage.loadFromSaveFormats(previousTaskState);
@@ -275,8 +275,8 @@ public class MoonEngine {
         tasks.addAll(restoredTasks);
         storage.save(tasks);
         previousTaskState = null;
-        return " Undid the previous command." + System.lineSeparator()
-                + " Now you have " + tasks.size() + " tasks in the list." + System.lineSeparator();
+        return " Rewound the previous command — we're so back." + System.lineSeparator()
+                + " You have " + tasks.size() + " tasks in the list now." + System.lineSeparator();
     }
 
     private void rememberCurrentState() {
