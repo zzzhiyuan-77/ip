@@ -35,4 +35,22 @@ public class TaskTest {
         assertTrue(task.matchesKeyword("BOOK"));
         assertFalse(task.matchesKeyword("assignment"));
     }
+
+    /** Verifies that a task exposes its original description. */
+    @Test
+    void taskDescription_returnsOriginalText() {
+        Task task = new Task("read book");
+
+        assertEquals("read book", task.getDescription());
+    }
+
+    /** Verifies the display format and status transitions of a to-do task. */
+    @Test
+    void todoTask_formatsDescriptionAndStatus() {
+        ToDo todo = new ToDo("write report");
+
+        assertEquals("[T][ ] write report", todo.toString());
+        todo.markAsDone();
+        assertEquals("[T][X] write report", todo.toString());
+    }
 }
