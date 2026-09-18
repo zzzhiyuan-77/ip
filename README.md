@@ -23,3 +23,23 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    ```
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## Building the executable JAR
+
+Use Java 25 when running Gradle. From the project root, run:
+
+```powershell
+java -version
+.\gradlew.bat clean shadowJar
+```
+
+Gradle creates the executable fat JAR at `build/libs/moon.jar`. The Shadow JAR
+contains Moon's JavaFX dependencies, so JavaFX does not need to be installed
+separately on the machine running the JAR. The generated file should not be
+committed to Git.
+
+To distribute the application, copy `moon.jar` into an empty folder and run:
+
+```powershell
+java -jar "moon.jar"
+```
