@@ -15,6 +15,12 @@ import java.util.List;
 public class Storage {
     /** The relative, operating-system-independent location of Moon's data file. */
     private static final Path FILE_PATH = Path.of("data", "moon.txt");
+    private static final String FIELD_SEPARATOR_REGEX = " \\| ";
+    private static final String TODO_TYPE = "T";
+    private static final String DEADLINE_TYPE = "D";
+    private static final String EVENT_TYPE = "E";
+    private static final String INCOMPLETE_STATUS = "0";
+    private static final String COMPLETE_STATUS = "1";
 
     /**
      * Saves every task, replacing the previous saved task list.
@@ -57,18 +63,18 @@ public class Storage {
      * @return the recreated task
      */
     private Task createTask(String savedTask) throws IOException {
-        String[] parts = savedTask.split(" \\| ", -1);
+        String[] parts = savedTask.split(FIELD_SEPARATOR_REGEX, -1);
         if (parts.length < 3 || !isValidStatus(parts[1])) {
             throw new IOException("The data file has an invalid task format.");
         }
         Task task = switch (parts[0]) {
-        case "T" -> createToDo(parts);
-        case "D" -> createDeadline(parts);
-        case "E" -> createEvent(parts);
+        case TODO_TYPE -> createToDo(parts);
+        case DEADLINE_TYPE -> createDeadline(parts);
+        case EVENT_TYPE -> createEvent(parts);
         default -> throw new IOException("The data file has an unknown task type.");
         };
         assert task != null : "A recognized task type must produce a task.";
-        if (parts[1].equals("1")) {
+        if (parts[1].equals(COMPLETE_STATUS)) {
             task.markAsDone();
         }
         return task;
@@ -81,7 +87,7 @@ public class Storage {
      * @return whether the status is {@code 0} or {@code 1}
      */
     private boolean isValidStatus(String status) {
-        return status.equals("0") || status.equals("1");
+        return status.equals(INCOMPLETE_STATUS) || status.equals(COMPLETE_STATUS);
     }
 
     /**
