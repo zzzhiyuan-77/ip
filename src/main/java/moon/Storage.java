@@ -53,9 +53,18 @@ public class Storage {
 
     /** Recreates tasks from their saved data lines. */
     List<Task> loadFromSaveFormats(List<String> savedTasks) throws IOException {
+        if (savedTasks == null) {
+            throw new IOException("The data file contents are missing.");
+        }
         List<Task> tasks = new ArrayList<>();
         for (String savedTask : savedTasks) {
-            tasks.add(createTask(savedTask));
+            Task task = createTask(savedTask);
+            boolean duplicateTask = tasks.stream()
+                    .anyMatch(existingTask -> existingTask.toSaveFormat().equals(task.toSaveFormat()));
+            if (duplicateTask) {
+                throw new IOException("The data file contains a duplicate task.");
+            }
+            tasks.add(task);
         }
         return tasks;
     }
@@ -67,6 +76,9 @@ public class Storage {
      * @return the recreated task
      */
     private Task createTask(String savedTask) throws IOException {
+        if (savedTask == null || savedTask.isBlank()) {
+            throw new IOException("The data file contains a blank task entry.");
+        }
         String[] parts = savedTask.split(FIELD_SEPARATOR_REGEX, -1);
         if (parts.length < 3 || !isValidStatus(parts[1])) {
             throw new IOException("The data file has an invalid task format.");
@@ -133,7 +145,12 @@ public class Storage {
         if (parts.length != 5 || parts[2].isBlank() || parts[3].isBlank() || parts[4].isBlank()) {
             throw new IOException("The data file has an invalid event format.");
         }
-        return new Event(parts[2], parseSavedDate(parts[3]), parseSavedDate(parts[4]));
+        LocalDate from = parseSavedDate(parts[3]);
+        LocalDate to = parseSavedDate(parts[4]);
+        if (!from.isBefore(to)) {
+            throw new IOException("The data file contains an event with an invalid date range.");
+        }
+        return new Event(parts[2], from, to);
     }
 
     /**

@@ -37,7 +37,7 @@ public class MoonEngine {
         try {
             loadedTasks = storage.load();
             failedToLoad = false;
-        } catch (IOException exception) {
+        } catch (IOException | SecurityException exception) {
             loadedTasks = new ArrayList<>();
             failedToLoad = true;
         }
@@ -62,16 +62,24 @@ public class MoonEngine {
      * @return Moon's response text
      */
     public String getResponse(String command) {
-        if (command.equals(BYE_COMMAND)) {
+        String normalizedCommand = normalizeCommand(command);
+        if (normalizedCommand.isEmpty()) {
+            return "Oof! Please enter a command — don't leave me hanging." + System.lineSeparator();
+        }
+        if (normalizedCommand.equals(BYE_COMMAND)) {
             return "Aight, catch you later ✌️";
         }
         try {
-            return processCommand(command);
+            return processCommand(normalizedCommand);
         } catch (MoonException exception) {
             return "Oof! " + exception.getMessage() + System.lineSeparator();
-        } catch (IOException exception) {
+        } catch (IOException | SecurityException exception) {
             return "Oof! I couldn't save your task list — the save got a little scuffed." + System.lineSeparator();
         }
+    }
+
+    private String normalizeCommand(String command) {
+        return command == null ? "" : command.strip().replaceAll("\\s+", " ");
     }
 
     private String processCommand(String command) throws MoonException, IOException {
@@ -107,6 +115,9 @@ public class MoonEngine {
 
     private Deadline parseDeadline(String command) throws MoonException {
         String details = command.substring(DEADLINE_COMMAND.length()).trim();
+        if (hasDuplicateParameter(details, BY_SEPARATOR)) {
+            throw new MoonException("a deadline can only have one /by parameter.");
+        }
         int byIndex = details.indexOf(BY_SEPARATOR);
         if (byIndex < 0) {
             throw new MoonException("a deadline needs /by followed by its due date or time, fr.");
@@ -116,6 +127,7 @@ public class MoonEngine {
         if (description.isEmpty()) {
             throw new MoonException("your deadline needs a description before /by — give me something to work with.");
         }
+        validateDescription(description, "deadline");
         if (by.isEmpty()) {
             throw new MoonException("your deadline needs a date or time after /by.");
         }
@@ -124,6 +136,12 @@ public class MoonEngine {
 
     private Event parseEvent(String command) throws MoonException {
         String details = command.substring(EVENT_COMMAND.length()).trim();
+        if (hasDuplicateParameter(details, FROM_SEPARATOR)) {
+            throw new MoonException("an event can only have one /from parameter.");
+        }
+        if (hasDuplicateParameter(details, TO_SEPARATOR)) {
+            throw new MoonException("an event can only have one /to parameter.");
+        }
         int fromIndex = details.indexOf(FROM_SEPARATOR);
         int toIndex = details.indexOf(TO_SEPARATOR);
         if (fromIndex < 0 || toIndex < 0 || toIndex < fromIndex) {
@@ -135,10 +153,16 @@ public class MoonEngine {
         if (description.isEmpty()) {
             throw new MoonException("your event needs a description before /from.");
         }
+        validateDescription(description, "event");
         if (from.isEmpty() || to.isEmpty()) {
             throw new MoonException("your event needs both a start time and an end time.");
         }
-        return new Event(description, parseDate(from), parseDate(to));
+        LocalDate fromDate = parseDate(from);
+        LocalDate toDate = parseDate(to);
+        if (!fromDate.isBefore(toDate)) {
+            throw new MoonException("an event's /from date must be before its /to date.");
+        }
+        return new Event(description, fromDate, toDate);
     }
 
     private LocalDate parseDate(String dateText) throws MoonException {
@@ -172,6 +196,16 @@ public class MoonEngine {
         return command.equals(commandName) || command.startsWith(commandName + " ");
     }
 
+    private boolean hasDuplicateParameter(String details, String parameter) {
+        return details.indexOf(parameter) != details.lastIndexOf(parameter);
+    }
+
+    private void validateDescription(String description, String taskType) throws MoonException {
+        if (description.contains("|")) {
+            throw new MoonException("your " + taskType + " description cannot contain the | character.");
+        }
+    }
+
     private String listTasks() {
         StringBuilder response = new StringBuilder();
         printTaskList(response);
@@ -189,6 +223,7 @@ public class MoonEngine {
         if (description.isEmpty()) {
             throw new MoonException("your todo needs a description — drop the details here.");
         }
+        validateDescription(description, "todo");
         return addTask(new ToDo(description));
     }
 
@@ -253,7 +288,12 @@ public class MoonEngine {
         }
     }
 
-    private String addTask(Task task) throws IOException {
+    private String addTask(Task task) throws MoonException, IOException {
+        boolean duplicateTask = tasks.stream()
+                .anyMatch(existingTask -> existingTask.toSaveFormat().equals(task.toSaveFormat()));
+        if (duplicateTask) {
+            throw new MoonException("that exact task is already on your list, bestie.");
+        }
         rememberCurrentState();
         tasks.add(task);
         storage.save(tasks);

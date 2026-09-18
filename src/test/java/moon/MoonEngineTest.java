@@ -26,6 +26,43 @@ public class MoonEngineTest {
         assertTrue(response.contains("your find needs a keyword."));
     }
 
+    /** Verifies that missing and whitespace-only commands receive a useful error. */
+    @Test
+    public void getResponse_missingCommand_reportsHelpfulError() {
+        MoonEngine engine = new MoonEngine();
+
+        assertTrue(engine.getResponse(null).contains("Please enter a command"));
+        assertTrue(engine.getResponse("   ").contains("Please enter a command"));
+    }
+
+    /** Verifies that harmless extra whitespace is normalized before processing. */
+    @Test
+    public void getResponse_extraWhitespace_stillRecognizesCommand() {
+        MoonEngine engine = new MoonEngine();
+
+        assertEquals("Aight, catch you later ✌️", engine.getResponse("  bye   "));
+    }
+
+    /** Verifies that an event cannot end before it starts. */
+    @Test
+    public void getResponse_eventWithInvalidDateRange_reportsHelpfulError() {
+        MoonEngine engine = new MoonEngine();
+
+        String response = engine.getResponse("event concert /from 2026-09-20 /to 2026-09-20");
+
+        assertTrue(response.contains("/from date must be before its /to date"));
+    }
+
+    /** Verifies that duplicate command parameters are rejected. */
+    @Test
+    public void getResponse_duplicateDeadlineParameter_reportsHelpfulError() {
+        MoonEngine engine = new MoonEngine();
+
+        String response = engine.getResponse("deadline exam /by 2026-09-20 /by 2026-09-21");
+
+        assertTrue(response.contains("only have one /by parameter"));
+    }
+
     /** Verifies that the GUI can display Moon's farewell response. */
     @Test
     public void getResponse_bye_returnsFarewell() {
