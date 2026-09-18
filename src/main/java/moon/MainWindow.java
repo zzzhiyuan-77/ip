@@ -30,9 +30,10 @@ public class MainWindow {
     /** Connects this controller to Moon's command engine. */
     public void setMoon(MoonEngine moon) {
         this.moon = moon;
-        addDialog("Hello! I'm Moon, your personal chatbot.\nWhat can I do for you?", false);
+        addDialog("Yo, I'm Moonie 🌙 — your low-key task bestie.\n"
+                + "Let's get this list sorted, no cap. What are we doing?", false);
         if (moon.hasLoadingError()) {
-            addDialog("Oof! I couldn't load your task list. Starting with an empty list.", false);
+            addDialog("Oof! I couldn't load your task list. Starting fresh for now.", false);
         }
     }
 

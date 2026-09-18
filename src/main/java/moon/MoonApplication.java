@@ -28,7 +28,7 @@ public class MoonApplication extends Application {
         scene.getStylesheets().add(stylesheet.toExternalForm());
         MainWindow controller = loader.getController();
         controller.setMoon(new MoonEngine());
-        stage.setTitle("Moon");
+        stage.setTitle("Moonie");
         stage.setMinWidth(520);
         stage.setMinHeight(420);
         stage.setScene(scene);

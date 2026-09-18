@@ -20,8 +20,8 @@ public class Ui {
     /** Displays Moon's welcome message. */
     public void showWelcome() {
         showLine();
-        System.out.println("Hello! I'm Moon, your personal chatbot.");
-        System.out.println("What can I do for you?");
+        System.out.println("Yo, I'm Moonie 🌙 — your low-key task bestie.");
+        System.out.println("Let's get this list sorted, no cap. What are we doing?");
         showLine();
     }
 
@@ -41,21 +41,21 @@ public class Ui {
 
     /** Displays an error encountered while loading saved tasks. */
     public void showLoadingError() {
-        System.out.println(" Oof! I couldn't load your task list. Starting with an empty list.");
+        System.out.println(" Oof! I couldn't load your task list. Starting fresh for now.");
     }
 
     /** Displays an error raised while processing a command. */
     public void showError(String message) {
-        System.out.println(" Oof! " + message);
+        System.out.println(" Oof! That didn't hit: " + message);
     }
 
     /** Displays the error used when saving a task list fails. */
     public void showSavingError() {
-        System.out.println(" Oof! I couldn't save your task list.");
+        System.out.println(" Oof! The save got a little scuffed.");
     }
 
     /** Displays Moon's farewell message. */
     public void showGoodbye() {
-        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println("Aight, catch you later ✌️");
     }
 }
