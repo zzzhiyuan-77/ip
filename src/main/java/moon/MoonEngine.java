@@ -164,6 +164,8 @@ public class MoonEngine {
             if (taskNumber < 1 || taskNumber > tasks.size()) {
                 throw new MoonException("task " + taskNumber + " is not in your list yet.");
             }
+            assert taskNumber - 1 >= 0 && taskNumber - 1 < tasks.size()
+                    : "A validated task number must produce a valid list index.";
             return taskNumber - 1;
         } catch (NumberFormatException exception) {
             throw new MoonException("use a task number after " + action + ", for example: "

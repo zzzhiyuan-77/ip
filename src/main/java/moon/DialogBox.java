@@ -21,6 +21,7 @@ public class DialogBox extends HBox {
     /** Initializes the message label after the dialog FXML has been loaded. */
     @FXML
     private void initialize() {
+        assert messageLabel != null : "DialogBox.fxml must inject the message label.";
         messageLabel.setText(message);
         String backgroundColor = userMessage ? "#dbeafe" : "#ffffff";
         messageLabel.setStyle("-fx-background-color: " + backgroundColor
