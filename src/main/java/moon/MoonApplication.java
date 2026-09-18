@@ -1,6 +1,7 @@
 package moon;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +23,9 @@ public class MoonApplication extends Application {
         Parent root = loader.load();
         assert root != null : "MainWindow.fxml must load a root node.";
         Scene scene = new Scene(root);
+        URL stylesheet = MoonApplication.class.getResource("/styles/moon.css");
+        assert stylesheet != null : "Moon stylesheet must be available on the classpath.";
+        scene.getStylesheets().add(stylesheet.toExternalForm());
         MainWindow controller = loader.getController();
         controller.setMoon(new MoonEngine());
         stage.setTitle("Moon");
