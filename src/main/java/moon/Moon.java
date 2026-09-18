@@ -113,7 +113,8 @@ public class Moon {
             System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
             return;
         }
-        throw new MoonException("I don't recognise that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.");
+        throw new MoonException("I don't recognise that command. Try todo, deadline, event, "
+                + "list, mark, unmark, delete, or bye.");
     }
 
     /**
