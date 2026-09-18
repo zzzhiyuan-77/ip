@@ -67,6 +67,7 @@ public class Storage {
         case "E" -> createEvent(parts);
         default -> throw new IOException("The data file has an unknown task type.");
         };
+        assert task != null : "A recognized task type must produce a task.";
         if (parts[1].equals("1")) {
             task.markAsDone();
         }

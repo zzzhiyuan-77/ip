@@ -38,6 +38,7 @@ public class MainWindow {
     /** Sends the command currently entered in the text field. */
     @FXML
     private void handleUserInput() {
+        assert moon != null : "The main window must be connected to Moon before use.";
         String command = userInput.getText().trim();
         if (command.isEmpty()) {
             return;
