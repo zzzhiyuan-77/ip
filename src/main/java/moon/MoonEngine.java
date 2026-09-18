@@ -17,15 +17,17 @@ public class MoonEngine {
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
     private static final String DELETE_COMMAND = "delete";
+    private static final String UNDO_COMMAND = "undo";
     private static final String BY_SEPARATOR = " /by ";
     private static final String FROM_SEPARATOR = " /from ";
     private static final String TO_SEPARATOR = " /to ";
     private static final String UNKNOWN_COMMAND_MESSAGE = "I don't recognise that command."
-            + " Try todo, deadline, event, find, list, mark, unmark, delete, or bye.";
+            + " Try todo, deadline, event, find, list, mark, unmark, delete, undo, or bye.";
 
     private final Storage storage;
     private final List<Task> tasks;
     private final boolean loadingError;
+    private List<String> previousTaskState;
 
     /** Creates an engine and loads Moon's saved tasks. */
     public MoonEngine() {
@@ -41,6 +43,7 @@ public class MoonEngine {
         }
         tasks = loadedTasks;
         loadingError = failedToLoad;
+        previousTaskState = null;
     }
 
     /**
@@ -95,6 +98,9 @@ public class MoonEngine {
         }
         if (isCommand(command, DELETE_COMMAND)) {
             return deleteTask(command);
+        }
+        if (command.equals(UNDO_COMMAND)) {
+            return undoLastCommand();
         }
         throw new MoonException(UNKNOWN_COMMAND_MESSAGE);
     }
@@ -187,7 +193,9 @@ public class MoonEngine {
     }
 
     private String markTask(String command) throws MoonException, IOException {
-        Task task = tasks.get(findTaskIndex(command, MARK_COMMAND));
+        int taskIndex = findTaskIndex(command, MARK_COMMAND);
+        rememberCurrentState();
+        Task task = tasks.get(taskIndex);
         task.markAsDone();
         storage.save(tasks);
 
@@ -198,7 +206,9 @@ public class MoonEngine {
     }
 
     private String unmarkTask(String command) throws MoonException, IOException {
-        Task task = tasks.get(findTaskIndex(command, UNMARK_COMMAND));
+        int taskIndex = findTaskIndex(command, UNMARK_COMMAND);
+        rememberCurrentState();
+        Task task = tasks.get(taskIndex);
         task.unmarkAsDone();
         storage.save(tasks);
 
@@ -209,7 +219,9 @@ public class MoonEngine {
     }
 
     private String deleteTask(String command) throws MoonException, IOException {
-        Task removedTask = tasks.remove(findTaskIndex(command, DELETE_COMMAND));
+        int taskIndex = findTaskIndex(command, DELETE_COMMAND);
+        rememberCurrentState();
+        Task removedTask = tasks.remove(taskIndex);
         storage.save(tasks);
 
         StringBuilder response = new StringBuilder();
@@ -242,6 +254,7 @@ public class MoonEngine {
     }
 
     private String addTask(Task task) throws IOException {
+        rememberCurrentState();
         tasks.add(task);
         storage.save(tasks);
 
@@ -250,6 +263,26 @@ public class MoonEngine {
         appendLine(response, "   " + task);
         appendLine(response, " Now you have " + tasks.size() + " tasks in the list.");
         return response.toString();
+    }
+
+    private String undoLastCommand() throws IOException {
+        if (previousTaskState == null) {
+            return " Nothing to undo." + System.lineSeparator();
+        }
+
+        List<Task> restoredTasks = storage.loadFromSaveFormats(previousTaskState);
+        tasks.clear();
+        tasks.addAll(restoredTasks);
+        storage.save(tasks);
+        previousTaskState = null;
+        return " Undid the previous command." + System.lineSeparator()
+                + " Now you have " + tasks.size() + " tasks in the list." + System.lineSeparator();
+    }
+
+    private void rememberCurrentState() {
+        previousTaskState = tasks.stream()
+                .map(Task::toSaveFormat)
+                .toList();
     }
 
     private void appendLine(StringBuilder response, String line) {
