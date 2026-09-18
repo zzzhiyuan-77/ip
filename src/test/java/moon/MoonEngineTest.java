@@ -33,4 +33,12 @@ public class MoonEngineTest {
 
         assertEquals("Bye. Hope to see you again soon!", engine.getResponse("bye"));
     }
+
+    /** Verifies that undo reports clearly when no previous mutation exists. */
+    @Test
+    public void getResponse_undoWithoutPreviousCommand_reportsNoAction() {
+        MoonEngine engine = new MoonEngine();
+
+        assertTrue(engine.getResponse("undo").contains("Nothing to undo."));
+    }
 }

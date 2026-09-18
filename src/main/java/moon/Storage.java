@@ -44,12 +44,17 @@ public class Storage {
      * @throws IOException if the data file cannot be read or has an invalid format
      */
     public List<Task> load() throws IOException {
-        List<Task> tasks = new ArrayList<>();
         if (!Files.exists(FILE_PATH)) {
-            return tasks;
+            return new ArrayList<>();
         }
 
-        for (String savedTask : Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8)) {
+        return loadFromSaveFormats(Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8));
+    }
+
+    /** Recreates tasks from their saved data lines. */
+    List<Task> loadFromSaveFormats(List<String> savedTasks) throws IOException {
+        List<Task> tasks = new ArrayList<>();
+        for (String savedTask : savedTasks) {
             tasks.add(createTask(savedTask));
         }
         return tasks;
