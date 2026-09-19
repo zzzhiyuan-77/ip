@@ -22,7 +22,6 @@
             </ImageView>
             <VBox spacing="2.0">
                 <Label text="Moonie" styleClass="header-title" />
-                <Label text="Your low-key task bestie" styleClass="header-subtitle" />
             </VBox>
         </HBox>
     </top>

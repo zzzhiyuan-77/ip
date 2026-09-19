@@ -21,7 +21,7 @@ public class MoonEngine {
     private static final String BY_SEPARATOR = " /by ";
     private static final String FROM_SEPARATOR = " /from ";
     private static final String TO_SEPARATOR = " /to ";
-    private static final String UNKNOWN_COMMAND_MESSAGE = "Hmm, I don't know that command yet, bestie."
+    private static final String UNKNOWN_COMMAND_MESSAGE = "Hmm, I don't know that command yet."
             + " Try todo, deadline, event, find, list, mark, unmark, delete, undo, or bye.";
 
     private final Storage storage;
@@ -145,7 +145,7 @@ public class MoonEngine {
         int fromIndex = details.indexOf(FROM_SEPARATOR);
         int toIndex = details.indexOf(TO_SEPARATOR);
         if (fromIndex < 0 || toIndex < 0 || toIndex < fromIndex) {
-            throw new MoonException("an event needs both /from and /to times, no cap.");
+            throw new MoonException("an event needs both /from and /to times.");
         }
         String description = details.substring(0, fromIndex).trim();
         String from = details.substring(fromIndex + FROM_SEPARATOR.length(), toIndex).trim();
@@ -176,7 +176,7 @@ public class MoonEngine {
     private int findTaskIndex(String command, String action) throws MoonException {
         String numberText = command.substring(action.length()).trim();
         if (numberText.isEmpty()) {
-            throw new MoonException("tell me which task number to " + action + ", bestie.");
+            throw new MoonException("tell me which task number to " + action + ".");
         }
         try {
             int taskNumber = Integer.parseInt(numberText);
@@ -292,7 +292,7 @@ public class MoonEngine {
         boolean duplicateTask = tasks.stream()
                 .anyMatch(existingTask -> existingTask.toSaveFormat().equals(task.toSaveFormat()));
         if (duplicateTask) {
-            throw new MoonException("that exact task is already on your list, bestie.");
+            throw new MoonException("that exact task is already on your list.");
         }
         rememberCurrentState();
         tasks.add(task);
@@ -307,7 +307,7 @@ public class MoonEngine {
 
     private String undoLastCommand() throws IOException {
         if (previousTaskState == null) {
-            return " No previous move to undo, bestie." + System.lineSeparator();
+            return " No previous move to undo." + System.lineSeparator();
         }
 
         List<Task> restoredTasks = storage.loadFromSaveFormats(previousTaskState);

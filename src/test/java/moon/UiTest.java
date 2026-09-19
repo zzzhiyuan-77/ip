@@ -53,7 +53,7 @@ public class UiTest {
 
         String message = output.toString(StandardCharsets.UTF_8);
         assertTrue(message.contains("Moonie"));
-        assertTrue(message.contains("task bestie"));
+        assertTrue(message.contains("task sidekick"));
     }
 
     /** Verifies that console error and farewell messages are displayed. */
