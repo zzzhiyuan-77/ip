@@ -21,7 +21,7 @@
                 </image>
             </ImageView>
             <VBox spacing="2.0">
-                <Label text="Moonie" styleClass="header-title" />
+                <Label text="Moon" styleClass="header-title" />
             </VBox>
         </HBox>
     </top>
@@ -38,7 +38,7 @@
             <TextField fx:id="userInput" HBox.hgrow="ALWAYS" promptText="Drop a command..."
                        styleClass="command-input" onAction="#handleUserInput" />
             <Button fx:id="sendButton" mnemonicParsing="false" onAction="#handleUserInput"
-                    text="Bet" styleClass="send-button" />
+                    text="Send" styleClass="send-button" />
         </HBox>
     </bottom>
 </BorderPane>

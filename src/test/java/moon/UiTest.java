@@ -44,15 +44,15 @@ public class UiTest {
         assertNull(ui.readCommand());
     }
 
-    /** Verifies that the welcome message identifies Moonie and explains the tone. */
+    /** Verifies that the welcome message identifies Moon and explains the tone. */
     @Test
-    public void showWelcome_mentionsMooniePersonality() {
+    public void showWelcome_mentionsMoonPersonality() {
         Ui ui = new Ui();
 
         ui.showWelcome();
 
         String message = output.toString(StandardCharsets.UTF_8);
-        assertTrue(message.contains("Moonie"));
+        assertTrue(message.contains("Moon"));
         assertTrue(message.contains("task sidekick"));
     }
 

@@ -20,7 +20,7 @@ public class Ui {
     /** Displays Moon's welcome message. */
     public void showWelcome() {
         showLine();
-        System.out.println("Yo, I'm Moonie 🌙 — your task sidekick.");
+        System.out.println("Yo, I'm Moon 🌙 — your task sidekick.");
         System.out.println("Let's get this list sorted. What are we doing?");
         showLine();
     }
