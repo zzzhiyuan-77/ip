@@ -2,6 +2,7 @@ package moon;
 
 import java.io.IOException;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -48,6 +49,10 @@ public class MainWindow {
 
         addDialog(command, true);
         addDialog(moon.getResponse(command).strip(), false);
+        if (command.equals("bye")) {
+            Platform.exit();
+            return;
+        }
         userInput.clear();
         userInput.requestFocus();
     }
