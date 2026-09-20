@@ -113,8 +113,10 @@ public class StorageTest {
     @Test
     public void loadFromSaveFormats_duplicateTask_throwsIOException() {
         Storage storage = new Storage();
-        String task = "T | 0 | read book";
 
-        assertThrows(IOException.class, () -> storage.loadFromSaveFormats(List.of(task, task)));
+        assertThrows(IOException.class, () -> storage.loadFromSaveFormats(List.of(
+                "T | 0 | read book", "T | 0 | read book")));
+        assertThrows(IOException.class, () -> storage.loadFromSaveFormats(List.of(
+                "T | 0 | read book", "T | 1 | read book")));
     }
 }

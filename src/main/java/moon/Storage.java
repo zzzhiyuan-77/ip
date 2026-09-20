@@ -60,7 +60,7 @@ public class Storage {
         for (String savedTask : savedTasks) {
             Task task = createTask(savedTask);
             boolean duplicateTask = tasks.stream()
-                    .anyMatch(existingTask -> existingTask.toSaveFormat().equals(task.toSaveFormat()));
+                    .anyMatch(existingTask -> existingTask.hasSameDetailsAs(task));
             if (duplicateTask) {
                 throw new IOException("The data file contains a duplicate task.");
             }

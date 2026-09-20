@@ -41,6 +41,16 @@ public class Task {
     }
 
     /**
+     * Returns whether this task has the same details as another task, ignoring completion status.
+     *
+     * @param other the task to compare with
+     * @return whether both tasks have the same type and description
+     */
+    public boolean hasSameDetailsAs(Task other) {
+        return other != null && getClass().equals(other.getClass()) && description.equals(other.description);
+    }
+
+    /**
      * Returns whether this task description contains the specified keyword,
      * ignoring letter case.
      *

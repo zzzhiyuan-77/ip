@@ -89,6 +89,7 @@ public class MoonEngineCommandTest {
         MoonEngine engine = new MoonEngine();
 
         engine.getResponse("todo read book");
+        engine.getResponse("mark 1");
         String response = engine.getResponse("todo read book");
 
         assertTrue(response.contains("exact task is already on your list"));

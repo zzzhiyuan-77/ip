@@ -290,7 +290,7 @@ public class MoonEngine {
 
     private String addTask(Task task) throws MoonException, IOException {
         boolean duplicateTask = tasks.stream()
-                .anyMatch(existingTask -> existingTask.toSaveFormat().equals(task.toSaveFormat()));
+                .anyMatch(existingTask -> existingTask.hasSameDetailsAs(task));
         if (duplicateTask) {
             throw new MoonException("that exact task is already on your list.");
         }

@@ -32,6 +32,20 @@ public class Event extends Task {
     }
 
     /**
+     * Returns whether this event has the same description and dates as another event.
+     *
+     * @param other the task to compare with
+     * @return whether both events have the same details
+     */
+    @Override
+    public boolean hasSameDetailsAs(Task other) {
+        return other instanceof Event event
+                && description.equals(event.description)
+                && from.equals(event.from)
+                && to.equals(event.to);
+    }
+
+    /**
      * Returns this task in Moon's display format.
      *
      * @return the formatted event task
