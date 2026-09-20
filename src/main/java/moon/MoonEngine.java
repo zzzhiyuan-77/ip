@@ -31,7 +31,12 @@ public class MoonEngine {
 
     /** Creates an engine and loads Moon's saved tasks. */
     public MoonEngine() {
-        storage = new Storage();
+        this(new Storage());
+    }
+
+    /** Creates an engine backed by the given storage. */
+    MoonEngine(Storage storage) {
+        this.storage = storage;
         List<Task> loadedTasks;
         boolean failedToLoad;
         try {
@@ -229,10 +234,12 @@ public class MoonEngine {
 
     private String markTask(String command) throws MoonException, IOException {
         int taskIndex = findTaskIndex(command, MARK_COMMAND);
+        List<String> taskStateBeforeMutation = snapshotTaskState();
+        List<String> undoStateBeforeMutation = previousTaskState;
         rememberCurrentState();
         Task task = tasks.get(taskIndex);
         task.markAsDone();
-        storage.save(tasks);
+        saveWithRollback(taskStateBeforeMutation, undoStateBeforeMutation);
 
         StringBuilder response = new StringBuilder();
         appendLine(response, " Bet. Marked this task as done:");
@@ -242,10 +249,12 @@ public class MoonEngine {
 
     private String unmarkTask(String command) throws MoonException, IOException {
         int taskIndex = findTaskIndex(command, UNMARK_COMMAND);
+        List<String> taskStateBeforeMutation = snapshotTaskState();
+        List<String> undoStateBeforeMutation = previousTaskState;
         rememberCurrentState();
         Task task = tasks.get(taskIndex);
         task.unmarkAsDone();
-        storage.save(tasks);
+        saveWithRollback(taskStateBeforeMutation, undoStateBeforeMutation);
 
         StringBuilder response = new StringBuilder();
         appendLine(response, "Got you. This task is back to not done:");
@@ -255,9 +264,11 @@ public class MoonEngine {
 
     private String deleteTask(String command) throws MoonException, IOException {
         int taskIndex = findTaskIndex(command, DELETE_COMMAND);
+        List<String> taskStateBeforeMutation = snapshotTaskState();
+        List<String> undoStateBeforeMutation = previousTaskState;
         rememberCurrentState();
         Task removedTask = tasks.remove(taskIndex);
-        storage.save(tasks);
+        saveWithRollback(taskStateBeforeMutation, undoStateBeforeMutation);
 
         StringBuilder response = new StringBuilder();
         appendLine(response, " Say less. Deleted this task:");
@@ -294,9 +305,11 @@ public class MoonEngine {
         if (duplicateTask) {
             throw new MoonException("that exact task is already on your list.");
         }
+        List<String> taskStateBeforeMutation = snapshotTaskState();
+        List<String> undoStateBeforeMutation = previousTaskState;
         rememberCurrentState();
         tasks.add(task);
-        storage.save(tasks);
+        saveWithRollback(taskStateBeforeMutation, undoStateBeforeMutation);
 
         StringBuilder response = new StringBuilder();
         appendLine(response, " Bet. Added this task:");
@@ -310,19 +323,42 @@ public class MoonEngine {
             return " No previous move to undo." + System.lineSeparator();
         }
 
+        List<String> taskStateBeforeMutation = snapshotTaskState();
+        List<String> undoStateBeforeMutation = previousTaskState;
         List<Task> restoredTasks = storage.loadFromSaveFormats(previousTaskState);
         tasks.clear();
         tasks.addAll(restoredTasks);
-        storage.save(tasks);
+        saveWithRollback(taskStateBeforeMutation, undoStateBeforeMutation);
         previousTaskState = null;
         return " Rewound the previous command — we're so back." + System.lineSeparator()
                 + " You have " + tasks.size() + " tasks in the list now." + System.lineSeparator();
     }
 
     private void rememberCurrentState() {
-        previousTaskState = tasks.stream()
+        previousTaskState = snapshotTaskState();
+    }
+
+    private List<String> snapshotTaskState() {
+        return tasks.stream()
                 .map(Task::toSaveFormat)
                 .toList();
+    }
+
+    private void saveWithRollback(List<String> taskStateBeforeMutation,
+                                  List<String> undoStateBeforeMutation) throws IOException {
+        try {
+            storage.save(tasks);
+        } catch (IOException | SecurityException exception) {
+            restoreTaskState(taskStateBeforeMutation);
+            previousTaskState = undoStateBeforeMutation;
+            throw exception;
+        }
+    }
+
+    private void restoreTaskState(List<String> savedState) throws IOException {
+        List<Task> restoredTasks = storage.loadFromSaveFormats(savedState);
+        tasks.clear();
+        tasks.addAll(restoredTasks);
     }
 
     private void appendLine(StringBuilder response, String line) {

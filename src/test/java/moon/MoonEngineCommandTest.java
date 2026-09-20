@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,5 +97,34 @@ public class MoonEngineCommandTest {
         assertTrue(response.contains("exact task is already on your list"));
         assertTrue(engine.getResponse("list").indexOf("read book")
                 == engine.getResponse("list").lastIndexOf("read book"));
+    }
+
+    /** Verifies a failed save does not leave an unpersisted task in memory. */
+    @Test
+    public void addCommand_failedSave_rollsBackInMemoryState() {
+        FailingStorage storage = new FailingStorage();
+        MoonEngine engine = new MoonEngine(storage);
+        storage.failSaves = true;
+
+        String response = engine.getResponse("todo read book");
+
+        assertTrue(response.contains("couldn't save your task list"));
+        assertFalse(engine.getResponse("list").contains("read book"));
+    }
+
+    private static class FailingStorage extends Storage {
+        private boolean failSaves;
+
+        @Override
+        public List<Task> load() {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public void save(List<Task> tasks) throws IOException {
+            if (failSaves) {
+                throw new IOException("simulated save failure");
+            }
+        }
     }
 }
