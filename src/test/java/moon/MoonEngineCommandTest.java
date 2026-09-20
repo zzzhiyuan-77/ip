@@ -58,11 +58,13 @@ public class MoonEngineCommandTest {
     public void findCommand_returnsOnlyMatchingTasks() {
         MoonEngine engine = new MoonEngine();
 
+        engine.getResponse("todo plan weekend");
         engine.getResponse("todo read book");
         engine.getResponse("todo write code");
         String response = engine.getResponse("find BOOK");
 
-        assertTrue(response.contains("read book"));
+        assertTrue(response.contains(" 2.[T][ ] read book"));
+        assertFalse(response.contains(" 1.[T][ ] read book"));
         assertFalse(response.contains("write code"));
     }
 

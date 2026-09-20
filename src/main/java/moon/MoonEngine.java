@@ -280,11 +280,11 @@ public class MoonEngine {
         }
 
         appendLine(response, " Found these matching tasks:");
-        List<Task> matchingTasks = tasks.stream()
-                .filter(task -> task.matchesKeyword(keyword))
-                .toList();
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            appendLine(response, " " + (i + 1) + "." + matchingTasks.get(i));
+        for (int taskIndex = 0; taskIndex < tasks.size(); taskIndex++) {
+            Task task = tasks.get(taskIndex);
+            if (task.matchesKeyword(keyword)) {
+                appendLine(response, " " + (taskIndex + 1) + "." + task);
+            }
         }
     }
 
