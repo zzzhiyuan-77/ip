@@ -8,7 +8,7 @@ Moon is a friendly task-management chatbot with a console interface and a JavaFX
 
 ### GUI
 
-1. Build the executable JAR by following the instructions in the project [README](../README.md).
+1. Build the executable JAR by following the instructions in the project [README](https://github.com/zzzhiyuan-77/ip#building-the-executable-jar).
 2. Copy `build/libs/moon.jar` into an empty folder.
 3. Open a command window in that folder and run:
 
