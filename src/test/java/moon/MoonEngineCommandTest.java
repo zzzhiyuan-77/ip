@@ -50,6 +50,8 @@ public class MoonEngineCommandTest {
         engine.getResponse("event team meeting /from 2026-09-20 /to 2026-09-21");
         String response = engine.getResponse("list");
 
+        assertTrue(response.contains("Here's the current tasks:"));
+        assertFalse(response.contains("current task vibe"));
         assertTrue(response.contains("[T][ ] buy milk"));
         assertTrue(response.contains("[D][ ] submit report (by: Sep 25 2026)"));
         assertTrue(response.contains("[E][ ] team meeting (from: Sep 20 2026 to: Sep 21 2026)"));

@@ -278,7 +278,7 @@ public class MoonEngine {
     }
 
     private void printTaskList(StringBuilder response) {
-        appendLine(response, " Here's the current task vibe:");
+        appendLine(response, " Here's the current tasks:");
         for (int i = 0; i < tasks.size(); i++) {
             appendLine(response, " " + (i + 1) + "." + tasks.get(i));
         }

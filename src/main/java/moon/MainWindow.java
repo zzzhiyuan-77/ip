@@ -64,8 +64,8 @@ public class MainWindow {
             loader.setRoot(dialogBox);
             loader.setController(dialogBox);
             dialogContainer.getChildren().add(loader.load());
-            scrollPane.setVvalue(1.0);
             dialogBox.setAlignment(isUserMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+            scrollToBottom();
         } catch (IOException exception) {
             addFallbackDialog(message, isUserMessage);
         }
@@ -79,5 +79,10 @@ public class MainWindow {
             fallback.getStyleClass().add("error-message");
         }
         dialogContainer.getChildren().add(fallback);
+        scrollToBottom();
+    }
+
+    private void scrollToBottom() {
+        Platform.runLater(() -> scrollPane.setVvalue(1.0));
     }
 }
